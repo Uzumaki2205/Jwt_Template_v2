@@ -161,7 +161,8 @@ namespace Jwt_Template.Controllers
         public ActionResult DeleteFile(string fileName)
         {
             var entites = new DB_Entities();
-            var itemToRemove = entites.tblFileDetails.SingleOrDefault(x => x.FILENAME == fileName); //returns a single item.
+            var itemToRemove = entites.tblFileDetails.SingleOrDefault(x => x.FILENAME == fileName); 
+            //returns a single item.
 
             if (itemToRemove != null)
             {
