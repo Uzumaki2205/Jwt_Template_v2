@@ -1,0 +1,90 @@
+﻿@model Jwt_Template.Models.tblFileDetails
+@{
+    ViewBag.Title = "File Upload & File Download";
+}
+
+@Html.Raw(TempData["msg"])
+
+@using (Html.BeginForm("FileUpload", "Account", FormMethod.Post,
+    new { enctype = "multipart/form-data", style = "margin:20px" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-10">
+            <h2>File Upload</h2>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <label class="col-md-2 control-label">Upload Docx</label>
+                <div class="col-md-10">
+                    <input type="file" id="files" name="files" class="form-control" required="required"><br />
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Upload" class="btn btn-info" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*@{
+        var grid = new WebGrid(source: Model.FileList, canPage: true, rowsPerPage: 15);
+        @grid.GetHtml(tableStyle: "table table-striped table-bordered table-hover", headerStyle: "webgrid-header",
+            alternatingRowStyle: "webgrid-alternating-row", selectedRowStyle: "webgrid-selected-row",
+            footerStyle: "webgrid-footer", rowStyle: "webgrid-row-style", mode: WebGridPagerModes.All,
+            firstText: "<< First", previousText: "< Prev", nextText: "Next >", lastText: "Last >>",
+            htmlAttributes: new { id = "DataTable" },
+            columns: grid.Columns(
+                grid.Column("FileName", header: "FILE NAME", canSort: false),
+                grid.Column("FileUrl", header: "FILE PATH", canSort: false),
+                grid.Column(header: "DOWNLOAD", format:
+                                            @<text>
+                                                <a href="~/Account/DownloadFile?filePath=@item.FileUrl"><img src="~/Images/download.png" style="width: 15px; height: 15px" title="Download" /></a>
+                                            </text>),
+             grid.Column(header: "DELETE", format:
+                                                    @<text>
+                                                        @Html.ActionLink("Delete", "DeleteFile", "Account", new { fileName = Model.FileList })
+                                                    </text>     )
+         ));
+    }*@
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>FileName</th>
+            <th>Path</th>
+            <th>Download</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.FileList)
+        {
+            <tr>
+                <td>@item.FILENAME</td>
+                <td>@item.FILEURL</td>
+                <td><a href="~/Account/DownloadFile?filePath=@item.FILEURL">
+                    <img src="~/Images/download.png" style="width: 15px; height: 15px" title="Download" />
+                    </a>
+                </td>
+                <td>
+                    @Html.ActionLink("Del","DeleteFile", new { fileName = item.FILENAME })
+                        @*<img src="~/Images/download.png" style="width: 15px; height: 15px" title="Delete" />*@
+                    
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+@*@Html.DropDownList("nameTemplate", new SelectList(Model.FileList.Select(p => p.FileName)), "-- Select Template --")*@
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
