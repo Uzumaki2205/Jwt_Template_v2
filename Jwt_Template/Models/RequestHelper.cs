@@ -60,8 +60,7 @@ namespace Jwt_Template.Models
             {
                 httpClient.BaseAddress = new Uri(baseUrl);
                 httpClient.DefaultRequestHeaders.Add("Accept", "application/x-www-form-urlencoded");
-                httpClient.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 HttpResponseMessage response = await httpClient.GetAsync(urlRequest);
                 return response;
@@ -88,9 +87,21 @@ namespace Jwt_Template.Models
             using (var httpClient = new HttpClient())
             {
                 httpClient.BaseAddress = new Uri(baseURL);
-                //httpClient.DefaultRequestHeaders.Add("Accept", "application/x-www-form-urlencoded");
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));//ACCEPT header
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
 
+                HttpResponseMessage response = await httpClient.PostAsync(urlRequest, parameters);
+
+                return response;
+            }
+        }
+        //Post Request With baseUrl and url you define + content url encoded + header token
+        public static async Task<HttpResponseMessage> PostRequestWithToken(string urlRequest, string token, FormUrlEncodedContent parameters)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.BaseAddress = new Uri(baseURL);
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 HttpResponseMessage response = await httpClient.PostAsync(urlRequest, parameters);
 
                 return response;

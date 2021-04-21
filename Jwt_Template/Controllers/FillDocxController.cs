@@ -1,4 +1,5 @@
-﻿using Jwt_Template.Models;
+﻿using Jwt_Template.Filters;
+using Jwt_Template.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,11 +43,14 @@ namespace Jwt_Template.Controllers
 
                 jsonName.SaveAs(path);
 
+                //Create token to authorize
+                Session["Token"] = JwtManager.GenerateToken(new Random().Next(100).ToString());
+
                 var parameters = new Dictionary<string, string> { { "NameTemplate", nameTemplate }, { "Jsonpath", path } };
                 var encodedContent = new FormUrlEncodedContent(parameters);
 
                 HttpResponseMessage response =
-                    await RequestHelper.PostRequest($"api/FillDocx/Fill", encodedContent);
+                    await RequestHelper.PostRequestWithToken($"api/FillDocx/Fill", Session["Token"].ToString(), encodedContent);
 
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {

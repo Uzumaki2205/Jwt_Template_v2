@@ -1,5 +1,7 @@
-﻿using Jwt_Template.Models;
+﻿using Jwt_Template.Filters;
+using Jwt_Template.Models;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -22,6 +24,7 @@ namespace Jwt_Template.Controllers.API
             return Request.CreateResponse(HttpStatusCode.NotFound);
         }
 
+        [JwtAuthentication]
         [HttpPost]
         public string Fill([FromBody] Doc doc)
         {
@@ -38,7 +41,8 @@ namespace Jwt_Template.Controllers.API
             return null;
         }
 
-        [HttpPost] 
+        [JwtAuthentication]
+        [HttpPost]
         public HttpResponseMessage Download([FromBody] Download file)
         {
             var filePath = $"{CurrentDirectory}Renders/{file.FileName}";
@@ -63,11 +67,14 @@ namespace Jwt_Template.Controllers.API
 
     public class Doc
     {
+        [Required]
         public string NameTemplate { get; set; }
+        [Required]
         public string Jsonpath { get; set; }
     }
     public class Download
     {
+        [Required]
         public string FileName { get; set; }
     }
 }

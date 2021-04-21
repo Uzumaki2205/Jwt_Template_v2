@@ -1,7 +1,5 @@
-﻿using Jwt_Template.Filters;
-using Jwt_Template.Models;
-using Jwt_Template.Repositories;
-using System.Linq;
+﻿using Jwt_Template.Repositories;
+using System.ComponentModel.DataAnnotations;
 using System.Web.Http;
 
 namespace Jwt_Template.Controllers.API
@@ -10,23 +8,19 @@ namespace Jwt_Template.Controllers.API
     {
         [AllowAnonymous]
         [HttpPost]
-        public IHttpActionResult Login(tblUser user)
+        public IHttpActionResult Login(Account user)
         {
-            if (new AccountRepo().checkUser(user.Username, user.Password) != null)
+            if (new AccountRepo().checkUser(user.UserName, user.Password) != null)
                 return Ok();
             return NotFound();
         }
+    }
 
-        [JwtAuthentication]
-        [HttpGet]
-        public IHttpActionResult Dashboard()
-        {
-            var token = Request.Headers.GetValues("Authorization").First();
-            string tokenUsername = JwtAuthenticationAttribute.ValidateUser(token.Replace("Bearer ", ""));
-
-            if (tokenUsername != null)
-                return Ok(tokenUsername);
-            return null;
-        }
+    public class Account
+    {
+        [Required]
+        public string UserName { get; set; }
+        [Required]
+        public string Password { get; set; }
     }
 }

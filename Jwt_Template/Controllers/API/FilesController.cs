@@ -12,6 +12,6 @@ namespace Jwt_Template.Controllers.API
         public HttpResponseMessage FileUpload()
         {
             return Request.CreateResponse(HttpStatusCode.OK);
-        }
+        }    
     }
 }

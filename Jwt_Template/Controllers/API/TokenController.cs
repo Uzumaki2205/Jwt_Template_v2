@@ -1,4 +1,5 @@
 ﻿using Jwt_Template.Filters;
+using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 using System.Web.Http;
 
@@ -7,6 +8,7 @@ namespace Jwt_Template.Controllers.API
     public class ValidToken
     {
         public string Token { get; set; }
+        [Required]
         public string Username { get; set; }
     }
     public class TokenController : ApiController
@@ -21,17 +23,18 @@ namespace Jwt_Template.Controllers.API
             return Request.CreateResponse(System.Net.HttpStatusCode.OK, token);
         }
 
+        [JwtAuthentication]
         [HttpPost]
-        public IHttpActionResult ValidateToken(ValidToken ValidToken)
+        public HttpResponseMessage ValidateToken(ValidToken ValidToken)
         {
             if (ValidToken.Token == null || ValidToken.Username == null)
-                return BadRequest();
+                return Request.CreateResponse(System.Net.HttpStatusCode.Unauthorized);
             string username = null;
             JwtAuthenticationAttribute.ValidateToken(ValidToken.Token, out username);
 
             if (ValidToken.Username.Equals(username))
-                return Ok();
-            return Unauthorized();
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            return Request.CreateResponse(System.Net.HttpStatusCode.Unauthorized);
         }
     }
 }

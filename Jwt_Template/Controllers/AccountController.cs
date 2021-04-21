@@ -63,11 +63,21 @@ namespace Jwt_Template.Controllers
             if (Session["UserName"] == null || Session["Token"] == null)
                 return RedirectToAction("Login");
 
-            HttpResponseMessage response = 
-                await RequestHelper.GetRequestWithToken("/api/Account/Dashboard", Session["Token"].ToString());
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                return View();
+            var parameter_Validate = new Dictionary<string, string>
+            { { "Token", Session["Token"].ToString() }, { "UserName", Session["UserName"].ToString() } };
+            var encoded_Validate = new FormUrlEncodedContent(parameter_Validate);
 
+            // => Validate in controller API class
+            HttpResponseMessage response_Valid = await RequestHelper
+                .PostRequestWithToken("/api/Token/ValidateToken", Session["Token"].ToString(), encoded_Validate);
+
+            if (response_Valid.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string username = await response_Valid.Content.ReadAsStringAsync();
+                if(Session["UserName"].ToString().Equals(username))
+                    return View();
+            }
+                
             return RedirectToAction("Login");
         }
 
@@ -84,14 +94,6 @@ namespace Jwt_Template.Controllers
             HttpResponseMessage response = await RequestHelper.GetRequestWithToken("api/Files/FileUpload", token);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                //var list = new FileUploadRepo();
-                //if (list != null)
-                //{
-                //    model.FileList = list.FileList;
-                //    return View(model);
-                //}
-                //else return View();
-
                 using (DB_Entities context = new DB_Entities())
                 {
                     var allFiles = (from r in context.tblFileDetails select r).ToList();
